@@ -1,0 +1,54 @@
+{
+    "lr": 0.01,
+    "iter": 2000,
+    "alpha": 5,
+    "beta": 1000,
+    "crop_size" : [756, 1008],
+    "noise_rate" : 0.6,
+    "save_feq" : 100,
+    "log_feq" : 50,
+    
+    "style_name_2_index": {
+        "conv1_1": "0",
+        "conv2_1": "5",
+        "conv3_1": "10",
+        "conv4_1": "19",
+        "conv5_1": "28"
+    },
+    "style_index_2_name": {
+        "0": "conv1_1",
+        "5": "conv2_1",
+        "10": "conv3_1",
+        "19": "conv4_1",
+        "28": "conv5_1"
+    },
+    "style_weight_dict": {
+        "conv1_1": 0.5,
+        "conv2_1": 1.0,
+        "conv3_1": 1.5,
+        "conv4_1": 3.0,
+        "conv5_1": 4.0
+    },
+    "cont_name_2_index": {
+        "conv4_2": "21"
+    },
+    "cont_index_2_name": {
+        "21": "conv4_2"
+    },
+    "gen_name_2_index": {
+        "conv1_1": "0",
+        "conv2_1": "5",
+        "conv3_1": "10",
+        "conv4_1": "19",
+        "conv4_2": "21",
+        "conv5_1": "28"
+    },
+    "gen_index_2_name": {
+        "0": "conv1_1",
+        "5": "conv2_1",
+        "10": "conv3_1",
+        "19": "conv4_1",
+        "21": "conv4_2",
+        "28": "conv5_1"
+    }
+}
