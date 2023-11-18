@@ -23,5 +23,6 @@ class NST:
 My_NST = NST(6)
 
 for content_image, style_image in train_dataloader:
-    seq_c, seq_s = My_NST.forward(content_image, style_image)
+    (seq_c, pos_c), (seq_s, pos_s) = My_NST.forward(content_image, style_image)
     print(seq_c.shape, seq_s.shape)
+    print(pos_c.shape, pos_s.shape)
