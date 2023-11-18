@@ -25,14 +25,6 @@ def _get_activation_fn(activation):
         return F.glu
     raise RuntimeError(F"activation should be relu/gelu, not {activation}.")
 
-
-"""
-根据源码，应该是没有key mask和style路的positional encoding
-两种架构，第一种就是两个cross attention, 第二种是self-attention + cross-attention
-他现在的代码里应该是用的第一种
-
-还有就是在encoder和decoder里面的attention块中，好像value是没有pe的，这个和transformer是不是不一样？
-"""
 class TransformerDecoderLayer(nn.Module):
 
     def __init__(self, d_model, nhead, dim_feedforward=2048, dropout=0.1,
@@ -172,47 +164,6 @@ class TransformerDecoder(nn.Module):
 
 
 
-# CNN Decoder to construct the image
-
-"""
-At the beginning of the frame, it uses nn.Conv2d with kernel size and stride equal to patchsize to 
-embed the N * 3 * H * W to N * embedding_dim(512) * H/P * W/P
-In decoder, using nn.Conv2d with 3x3 kernel size after padding 2 means that
-it doesn't change the image size but only the channel size.
-i.e. it use nn.conv2D to change the channel size and nn.Upsample to change the image size
-"""
-decoder = nn.Sequential(
-    nn.ReflectionPad2d((1, 1, 1, 1)),
-    nn.Conv2d(512, 256, (3, 3)),
-    nn.ReLU(),
-    nn.Upsample(scale_factor=2, mode='nearest'),
-    nn.ReflectionPad2d((1, 1, 1, 1)),
-    nn.Conv2d(256, 256, (3, 3)),
-    nn.ReLU(),
-    nn.ReflectionPad2d((1, 1, 1, 1)),
-    nn.Conv2d(256, 256, (3, 3)),
-    nn.ReLU(),
-    nn.ReflectionPad2d((1, 1, 1, 1)),
-    nn.Conv2d(256, 256, (3, 3)),
-    nn.ReLU(),
-    nn.ReflectionPad2d((1, 1, 1, 1)),
-    nn.Conv2d(256, 128, (3, 3)),
-    nn.ReLU(),
-    nn.Upsample(scale_factor=2, mode='nearest'),
-    nn.ReflectionPad2d((1, 1, 1, 1)),
-    nn.Conv2d(128, 128, (3, 3)),
-    nn.ReLU(),
-    nn.ReflectionPad2d((1, 1, 1, 1)),
-    nn.Conv2d(128, 64, (3, 3)),
-    nn.ReLU(),
-    nn.Upsample(scale_factor=2, mode='nearest'),
-    nn.ReflectionPad2d((1, 1, 1, 1)),
-    nn.Conv2d(64, 64, (3, 3)),
-    nn.ReLU(),
-    nn.ReflectionPad2d((1, 1, 1, 1)),
-    nn.Conv2d(64, 3, (3, 3)),
-)
-
 """
 CNN Decoder to reconstruct the image
 feature: Batchsize x H x W x C (Batchsize x 14 x 14 x 768)
@@ -288,7 +239,7 @@ class Decoder(nn.Module):
             if p.dim() > 1:
                 nn.init.xavier_uniform_(p)
 
-    def forward(self, content, style, pos_encoding):
+    def forward(self, content, style, content_pos_embedding):
         """
         params:
             content: [B HW D] ouput from content encoder
@@ -298,7 +249,7 @@ class Decoder(nn.Module):
         return:
             ouput: [B 3 P*H P*W] construt images
         """
-        output = self.trans_decoder(content, style, query_pos=pos_encoding)[0]
+        output = self.trans_decoder(content, style, query_pos=content_pos_embedding)[0]
         # reshape ouput from B x L x D to B x D x H x W
         B, L, D = output.shape
         output = output.reshape((B, D, int(np.sqrt(L)), int(np.sqrt(L))))
@@ -309,6 +260,9 @@ class Decoder(nn.Module):
 
 
 if __name__ == '__main__':
+    """
+    demo for decoder
+    """
     batchsize = 8
     length = 196
     dim = 768
@@ -317,6 +271,6 @@ if __name__ == '__main__':
     query_pos = torch.randn((batchsize, length, dim))
 
     model = Decoder()
-    output = model(content, style, query_pos)
+    output = model(content, style, content_pos_embedding = query_pos)
     print(output.shape)
     
