@@ -17,6 +17,7 @@ def deleteEncodingLayers(model, num_layers):
     return copyOfModel
 
 
+# Not used, just to demonstrate the structure
 vit_config = ViTConfig(hidden_size=768,
                        num_hidden_layers=12,
                        num_attention_heads=12,
@@ -35,7 +36,7 @@ vit_config = ViTConfig(hidden_size=768,
 
 
 class Lora_Encoder:
-    def __init__(self, num_layers):
+    def __init__(self, num_layers=6):
         self.processor = ViTImageProcessor.from_pretrained('google/vit-base-patch16-224-in21k')
         self.model = ViTModel.from_pretrained('google/vit-base-patch16-224-in21k')
         self.config = LoraConfig(
