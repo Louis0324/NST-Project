@@ -40,8 +40,12 @@ class Lora_Encoder(nn.Module):
         model = ModifyLayers(model, num_layers)
         self.lora_model = get_peft_model(model, peft_config=lora_config)
         
-    def forward(self, imags, interpolate_pos_encoding=False):
+    def forward(self, imags):
         B, C, H, W = imags.shape
+        if H == 224 and W == 224: # training config
+            interpolate_pos_encoding = False
+        else: # test time config
+            interpolate_pos_encoding = True
         outputs = self.lora_model(imags, interpolate_pos_encoding=interpolate_pos_encoding)
         out = outputs.last_hidden_state[:, 1:, :]
         pe = self.lora_model.embeddings.interpolate_pos_encoding(out, H, W)[:, 1:, :]
@@ -59,6 +63,6 @@ if __name__ == '__main__':
     print(lora_encoder)
     print_trainable_parameters(lora_encoder)
     
-    img = torch.rand(4, 3, 224, 224).abs()
-    out, pe = lora_encoder(img, interpolate_pos_encoding=False)
+    img = torch.rand(4, 3, 512, 512).abs()
+    out, pe = lora_encoder(img)
     print(out.shape, pe.shape)
