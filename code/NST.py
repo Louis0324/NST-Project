@@ -1,5 +1,5 @@
 from cyt_dataloader import PairedDataset, DataLoader
-from zxz_encoder import Lora_Encoder
+from encoder import Lora_Encoder
 from zyj_decode import Decoder
 
 batch_size = 8

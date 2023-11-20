@@ -9,7 +9,7 @@ from PIL import Image
 from matplotlib import pyplot as plt
 
 class PairedDataset(Dataset):
-    def __init__(self, content_dir, style_dir, crop = False, norm = False, mode='train'):
+    def __init__(self, content_dir, style_dir, crop = False, norm = True, mode='train'):
         
         """_summary_
 
