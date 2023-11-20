@@ -2,7 +2,7 @@ from cyt_dataloader import PairedDataset, DataLoader
 from zxz_encoder import Lora_Encoder
 from zyj_decode import Decoder
 
-batch_size = 4
+batch_size = 8
 content_dir = "C:/Users/ZhouXunZhe/Desktop/NST_subset/content"
 style_dir = "C:/Users/ZhouXunZhe/Desktop/NST_subset/style"
 

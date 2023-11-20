@@ -4,15 +4,27 @@ from torch import nn
 from peft import LoraConfig, get_peft_model
 
 
-def deleteEncodingLayers(model, num_layers):
+class My_Identity(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x):
+        return x
+
+
+def deleteEncodingLayers(model, num_layers_to_keep):  # must pass in the full bert model
     oldModuleList = model.base_model.encoder.layer
     newModuleList = nn.ModuleList()
 
-    for i in range(num_layers):
+    # Now iterate over all layers, only keepign only the relevant layers.
+    for i in range(num_layers_to_keep):
         newModuleList.append(oldModuleList[i])
 
+    # create a copy of the model, modify it with the new list, and return
     copyOfModel = copy.deepcopy(model)
     copyOfModel.base_model.encoder.layer = newModuleList
+    copyOfModel.base_model.layernorm = My_Identity()
+    copyOfModel.base_model.pooler = My_Identity()
 
     return copyOfModel
 
