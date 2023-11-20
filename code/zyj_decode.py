@@ -268,7 +268,7 @@ if __name__ == '__main__':
     dim = 768
     content = torch.randn((batchsize, length, dim))
     style = torch.randn((batchsize, length, dim))
-    query_pos = torch.randn((batchsize, length, dim))
+    query_pos = torch.randn((1, length, dim))
 
     model = Decoder()
     output = model(content, style, content_pos_embedding = query_pos)
