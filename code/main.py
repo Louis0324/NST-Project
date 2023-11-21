@@ -40,7 +40,8 @@ if __name__ == "__main__":
         lora_dropout=0.1,
         bias="none",
     )
-    model = NST(lora_config_c, lora_config_s, encoder_num_layers=6, decoder_num_layers=3)
+    model = NST(encoder_num_layers=6, decoder_num_layers=3)
+    # model = NST(encoder_num_layers=6, decoder_num_layers=3, lora_config_c=lora_config_c, lora_config_s=lora_config_s)
     model = model.to(device)
     print_trainable_parameters(model)
     # load the frozen vgg19
