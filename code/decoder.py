@@ -243,7 +243,7 @@ class Decoder(nn.Module):
         """
         params:
             content: [B HW D] ouput from content encoder
-            style: [B HW D] ouput from sty;e encoder
+            style: [B HW D] ouput from style encoder
             pos_encoding: [B HW D] postional encoding of content
         
         return:
