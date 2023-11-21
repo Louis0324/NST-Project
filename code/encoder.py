@@ -33,12 +33,15 @@ def print_trainable_parameters(model):
         f"trainable params: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param:.2f}"
     )
 
-class Lora_Encoder(nn.Module):
-    def __init__(self, num_layers, lora_config):
+class Encoder(nn.Module):
+    def __init__(self, num_layers, lora_config=None):
         super().__init__()
         model = ViTModel.from_pretrained('google/vit-base-patch16-224-in21k')
         model = ModifyLayers(model, num_layers)
-        self.lora_model = get_peft_model(model, peft_config=lora_config)
+        if lora_config is not None:
+            self.model = get_peft_model(model, peft_config=lora_config)
+        else:
+            self.model = model
         
     def forward(self, imags):
         B, C, H, W = imags.shape
@@ -46,9 +49,9 @@ class Lora_Encoder(nn.Module):
             interpolate_pos_encoding = False
         else: # test time config
             interpolate_pos_encoding = True
-        outputs = self.lora_model(imags, interpolate_pos_encoding=interpolate_pos_encoding)
+        outputs = self.model(imags, interpolate_pos_encoding=interpolate_pos_encoding)
         out = outputs.last_hidden_state[:, 1:, :]
-        pe = self.lora_model.embeddings.interpolate_pos_encoding(out, H, W)[:, 1:, :]
+        pe = self.model.embeddings.interpolate_pos_encoding(out, H, W)[:, 1:, :]
         return out, pe
 
 if __name__ == '__main__':
@@ -59,7 +62,8 @@ if __name__ == '__main__':
             lora_dropout=0.1,
             bias="none",
         )
-    lora_encoder = Lora_Encoder(num_layers=6, lora_config=lora_config)
+    lora_encoder = Encoder(num_layers=6)
+    # lora_encoder = Encoder(num_layers=6, lora_config=lora_config)
     print(lora_encoder)
     print_trainable_parameters(lora_encoder)
     

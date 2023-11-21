@@ -124,12 +124,11 @@ def _get_clones(module, N):
 
 # Tranformer Decoder 
 class TransformerDecoder(nn.Module):
-    def __init__(self, decoder_layer, num_layers, norm=None, return_intermediate=False):
+    def __init__(self, decoder_layer, num_layers, norm=None):
         super().__init__()
         self.layers = _get_clones(decoder_layer, num_layers)
         self.num_layers = num_layers
         self.norm = norm
-        self.return_intermediate = return_intermediate
 
     def forward(self, tgt, memory,
                 tgt_mask: Optional[Tensor] = None,
@@ -140,7 +139,6 @@ class TransformerDecoder(nn.Module):
                 query_pos: Optional[Tensor] = None):
         output = tgt
 
-        intermediate = []
 
         for layer in self.layers:
             output = layer(output, memory, tgt_mask=tgt_mask,
@@ -148,19 +146,12 @@ class TransformerDecoder(nn.Module):
                            tgt_key_padding_mask=tgt_key_padding_mask,
                            memory_key_padding_mask=memory_key_padding_mask,
                            pos=pos, query_pos=query_pos)
-            if self.return_intermediate:
-                intermediate.append(self.norm(output))
 
         if self.norm is not None:
             output = self.norm(output)
-            if self.return_intermediate:
-                intermediate.pop()
-                intermediate.append(output)
 
-        if self.return_intermediate:
-            return torch.stack(intermediate)
+        return output
 
-        return output.unsqueeze(0)
 
 
 
@@ -241,20 +232,20 @@ class Decoder(nn.Module):
 
     def forward(self, content, style, content_pos_embedding):
         """
-        params:
-            content: [B HW D] ouput from content encoder
-            style: [B HW D] ouput from style encoder
-            pos_encoding: [B HW D] postional encoding of content
+        #### input ####
+        content                 : output of the content encoder, in shape [L, B, C]
+        style                   : output of the style encoder, in shape [L, B, C]
+        content_pos_embedding   : positional embedding of the content seq, in shape [L, 1, C]
         
-        return:
-            ouput: [B 3 P*H P*W] construt images
+        #### output ####
+        output                  : generated images, in shape [B, 3, 224, 224] (training)
+        
         """
-        output = self.trans_decoder(content, style, query_pos=content_pos_embedding)[0]
-        # reshape ouput from B x L x D to B x D x H x W
-        B, L, D = output.shape
-        output = output.reshape((B, D, int(np.sqrt(L)), int(np.sqrt(L))))
+        output = self.trans_decoder(content, style, query_pos=content_pos_embedding) # [L, B, C]
+        L, B, C = output.shape
+        output = output.permute(1,2,0) # [B, C, L]
+        output = output.reshape((B, C, int(np.sqrt(L)), int(np.sqrt(L))))
         output = self.cnn_decoder(output)
-
         return output
 
 

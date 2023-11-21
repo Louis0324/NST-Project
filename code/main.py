@@ -9,7 +9,7 @@ from lossnet import VGG
 from trainer import train_NST
 from encoder import print_trainable_parameters
 
-device = torch.device("cuda:1" if torch.cuda.is_available() else 'cpu')
+device = torch.device("cuda:7" if torch.cuda.is_available() else 'cpu')
 if __name__ == "__main__":
     # set random seeds
     torch.manual_seed(324)
@@ -29,18 +29,19 @@ if __name__ == "__main__":
     lora_config_c = LoraConfig(
         r=16,
         lora_alpha=16,
-        target_modules=["query", "value", "key"],
+        target_modules=["query", "value"],
         lora_dropout=0.1,
         bias="none",
     )
     lora_config_s = LoraConfig(
         r=16,
         lora_alpha=16,
-        target_modules=["query", "value", "key"],
+        target_modules=["query", "value"],
         lora_dropout=0.1,
         bias="none",
     )
-    model = NST(lora_config_c, lora_config_s, encoder_num_layers=6, decoder_num_layers=3)
+    model = NST(lora_config_c=lora_config_c, lora_config_s=lora_config_s, encoder_num_layers=6, decoder_num_layers=3)
+    # model = NST(encoder_num_layers=6, decoder_num_layers=3)
     model = model.to(device)
     print_trainable_parameters(model)
     # load the frozen vgg19
@@ -50,7 +51,7 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, betas=(0.9, 0.999))
     lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[15, 20, 25], gamma=0.3)
     # train the model
-    train_NST(model, vgg, optimizer, lr_scheduler, train_dataloader, val_dataloader, num_epoch=30, comment='1st', save_list=[9, 19, 29], device=device, lambda_c=10, lambda_s=5, lambda_id1=1, lambda_id2=1)
+    train_NST(model, vgg, optimizer, lr_scheduler, train_dataloader, val_dataloader, num_epoch=30, comment='8th', save_list=[9, 19, 29], device=device, lambda_c=10, lambda_s=1, lambda_id1=20, lambda_id2=1)
 
 
 

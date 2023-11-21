@@ -15,7 +15,7 @@ def train_NST(model, vgg, optimizer, lr_scheduler, train_dataloader, val_dataloa
     for epoch in range(num_epoch):
         model.train()
         interval = 20
-        val_interval = 200
+        val_interval = 400
         # interval = 1
         # val_interval = 10
         running_loss = 0.
