@@ -1,0 +1,61 @@
+1st 
+--cuda:1
+--lr = 1e-4
+--lambda_c=10, lambda_s=5, lambda_id1=1, lambda_id2=1
+--"query", "value", "key"
+--no "key", content loss too high
+--x
+
+2nd
+--cuda:2
+--lr = 1e-4
+--lambda_c=10, lambda_s=5, lambda_id1=1, lambda_id2=1
+--"query", "value"
+
+3rd
+--cuda:3
+--lr = 1e-4
+--lambda_c=10, lambda_s=1, lambda_id1=20, lambda_id2=1
+--"query", "value", "key"
+--no "key"
+--x
+
+4th 
+--cuda:4
+--lr = 1e-4
+--lambda_c=10, lambda_s=1, lambda_id1=20, lambda_id2=1
+--"query", "value"
+--r=32
+
+5th 
+--cuda:5
+--lr = 1e-4
+--lambda_c=50, lambda_s=1, lambda_id1=20, lambda_id2=1
+--"query", "value"
+--r=64
+--lambda_c too high, not useful
+--x
+
+6th
+--cuda:6
+--lr = 1e-4
+--using full fine tuning
+--lambda_c=10, lambda_s=1, lambda_id1=20, lambda_id2=1
+--overfit? super slow, not as good as lora
+--x
+
+7th 
+--cuda:7
+--lr = 1e-4
+--encoder_num_layers=12
+--lambda_c=10, lambda_s=1, lambda_id1=20, lambda_id2=1
+--"query", "value"
+--r=16
+
+--------------------------------------------------------
+8th 
+--cuda:7
+--lr = 1e-4
+--lambda_c=10, lambda_s=1, lambda_id1=20, lambda_id2=1
+--"query", "value"
+--r=16

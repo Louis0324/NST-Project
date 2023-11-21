@@ -14,6 +14,10 @@ class NST(nn.Module):
 
     def forward(self, content_image, style_image):
         content, content_pos = self.encoder_c(content_image)
+        # content.shape = [B, t, C]
         style, _ = self.encoder_s(style_image)
+        content = content.transpose(0,1) # [t, B, C]
+        content_pos = content_pos.transpose(0,1) # [t, B, C]
+        style = style.transpose(0,1) # [t, B, C]
         output = self.decoder(content, style, content_pos)
         return output
