@@ -53,9 +53,187 @@
 --r=16
 
 --------------------------------------------------------
+correct the decoder, and it works!
+
 8th 
 --cuda:7
 --lr = 1e-4
 --lambda_c=10, lambda_s=1, lambda_id1=20, lambda_id2=1
 --"query", "value"
 --r=16
+--style loss not decreasing
+--x
+
+9th 
+--cuda:1
+--lr = 1e-4
+--lambda_c=10, lambda_s=5, lambda_id1=10, lambda_id2=1
+--"query", "value"
+--r=16
+--style loss too high
+--x
+
+10th 
+--cuda:3
+--lr = 1e-4
+--lambda_c=10, lambda_s=20, lambda_id1=50, lambda_id2=2
+--"query", "value"
+--r=16
+--style loss ~ 10, style not obvious, but content is obvious enough
+
+11th 
+--cuda:7
+--lr = 1e-4
+--lambda_c=10, lambda_s=20, lambda_id1=50, lambda_id2=2
+--"query", "value"
+--r=32
+--almost the same as r=16
+--x
+
+12th 
+--cuda:7
+--increase lr = 3e-4
+--lambda_c=10, lambda_s=20, lambda_id1=50, lambda_id2=2
+--"query", "value"
+--r=16
+--milestones=[2, 4, 6], num_epoch = 9
+--even worse than lr = 1e-4! 
+--change to lr = 5e-5
+--x
+
+13th 
+--cuda:4
+--lr = 1e-4
+--lambda_c=10, lambda_s=20, lambda_id1=0, lambda_id2=0
+--"query", "value"
+--r=16
+--milestones=[2, 4, 6], num_epoch = 9
+--x
+
+14th 
+--cuda:5
+--lr = 1e-4
+--lambda_c=10, lambda_s=20, lambda_id1=50, lambda_id2=2
+--"query", "value", "key"
+--r=16
+--go to 16th
+--x
+
+15th 
+--cuda:6
+--lr = 1e-4
+--lambda_c=10, lambda_s=20, lambda_id1=50, lambda_id2=2
+--"query", "value", "key", "dense"
+--r=16
+--go to 16th
+--x
+
+16th 
+--cuda:1
+--freeze encoder
+--lr = 1e-4
+--lambda_c=10, lambda_s=20, lambda_id1=50, lambda_id2=2
+--also works fine! should freeze for 2 epoch first, then unfreeze the encoder!
+
+17th 
+--cuda:5
+--freeze encoder, decrease number of cnn layers
+--lr = 1e-4
+--lambda_c=10, lambda_s=20, lambda_id1=50, lambda_id2=2
+--almost the same as 16th, should use less cnn layers!
+
+18th
+--cuda:4
+--same setting as 17th
+--lr = 1e-4
+--lambda_c=10, lambda_s=40, lambda_id1=50, lambda_id2=2
+--style loss ~ 6, style is still not obvious
+--content loss ~ 53.2
+
+----------------------------------------------------------------
+freeze encoder for first 2 epochs, then unfreeze it with lora
+
+19th
+--cuda:1
+--freeze encoder first for 2 epochs, then wrap encoder with lora
+--lambda_c=10, lambda_s=30, lambda_id1=50, lambda_id2=2
+--style loss ~ 7.2, content loss ~ 41
+
+20th 
+--cuda:5
+--same as 19th, but with different style loss (gram matrix)
+--lambda_c=1, lambda_s=1, lambda_id1=0, lambda_id2=0
+--x
+
+21th 
+--cuda:3
+--same as 20th
+--lambda_c=10, lambda_s=7, lambda_id1=0, lambda_id2=0
+--x
+
+22th 
+--cuda:3
+--same as 19th, freeze encoder first for 2 epochs, then wrap encoder with lora
+--lambda_c=10, lambda_s=30, lambda_id1=0, lambda_id2=0
+--style loss ~ 7.1, content loss ~ 46, identity loss has some use compared to 19th!
+--x
+
+23th 
+--cuda:5
+--same as 19th, freeze encoder first for 2 epochs, then wrap encoder with lora
+--lambda_c=1, lambda_s=5, lambda_id1=0, lambda_id2=0
+--content loss ~ 56, style loss ~ 4.8, style better, and content reserves
+
+24th 
+--cuda:2
+--same as 23th, freeze encoder first for 2 epochs, then wrap encoder with lora
+--lambda_c=1, lambda_s=10, lambda_id1=0, lambda_id2=0
+--content loss a little high, combined with 23th, should explore 1:5 to 1:10
+--x
+
+25th 
+--cuda:3
+--same as 23th, freeze encoder first for 2 epochs, then wrap encoder with lora
+--lambda_c=0.1, lambda_s=2, lambda_id1=0, lambda_id2=0
+--content loss too high!
+--x
+
+26th 
+--cuda:1
+--same as 23th, freeze encoder first for 2 epochs, then wrap encoder with lora
+--lambda_c=0.1, lambda_s=10, lambda_id1=0, lambda_id2=0
+--x
+
+27th 
+--cuda:4
+--same as 23th, freeze encoder first for 2 epochs, then wrap encoder with lora
+--lambda_c=0.1, lambda_s=5, lambda_id1=0, lambda_id2=0
+--content loss too high! 
+--x
+
+28th 
+--cuda:3
+--lambda_c=1, lambda_s=7, lambda_id1=0, lambda_id2=0
+--milestones=[4, 6, 8]
+--r = 16, ["query", "value"]
+--
+
+29th 
+--cuda:1
+--same as 28th, but r = 32
+--
+
+30th 
+--cuda:2
+--same as 28th, but ["query", "value", "key"]
+--
+
+31th
+--cuda:4
+--same as 28th, but decoder_num_layers=4
+--x
+
+32th 
+--cuda:4
+--same as 28th, but encoder_num_layers=8
+--

@@ -39,10 +39,6 @@ class PairedDataset(Dataset):
 
         self.content_files = self._get_image_files(self.content_dir)
         self.style_files = self._get_image_files(self.style_dir)
-
-        if self.mode == 'train':
-            random.shuffle(self.content_files)
-            random.shuffle(self.style_files)
             
     def _build_transform(self, crop, norm):
         transform_list = []

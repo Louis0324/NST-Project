@@ -54,7 +54,7 @@ def calc_mean_std(feat):
     return mean, std
 
 def style_loss(vgg, styles, gens):
-    """
+    """perceptual loss
     #### input ####
     vgg     : the pretrained and feature selected vgg19 model, FROZEN
     styles  : the original style images, in shape [B, 3, 224, 224]
@@ -74,6 +74,31 @@ def style_loss(vgg, styles, gens):
         loss_s += torch.mean((mean_s - mean_g) ** 2) + torch.mean((std_s - std_g) ** 2)
     return loss_s    
     
+# def style_loss(vgg, styles, gens):
+#     """Gram matrix method
+#     #### input ####
+#     vgg     : the pretrained and feature selected vgg19 model, FROZEN
+#     styles  : the original style images, in shape [B, 3, 224, 224]
+#     gens    : the generated images, in shape [B, 3, 224, 224]
+    
+#     #### output ####
+#     loss_s  : a scalar indicating the style loss of the input batch
+    
+#     """    
+#     features_s = vgg(styles)
+#     features_g = vgg(gens)
+#     # features is a 5-element list, each element is in shape [B, C, H, W], with different C, H, W for each element
+#     loss_s = 0.
+#     for feature_s, feature_g in zip(features_s, features_g):
+#         B, C, H, W = feature_s.shape
+#         feat_s_flat = feature_s.view(B, C, -1) # [B, C, H*W]
+#         S = feat_s_flat @ feat_s_flat.transpose(1,2) # [B, C, C]
+#         feat_g_flat = feature_g.view(B, C, -1) # [B, C, H*W]
+#         G = feat_g_flat @ feat_g_flat.transpose(1,2) # [B, C, C]    
+#         loss_s += (1 / (4 * B * H**2 * W**2 * C**2)) * torch.sum((G - S) ** 2)
+#     return loss_s
+    
+
 def identity_loss_1(Ic, Icc, Is, Iss):
     """
     #### input ####
@@ -129,10 +154,14 @@ def calc_total_loss(vgg, Ig, Ic, Icc, Is, Iss, lambda_c, lambda_s, lambda_id1, l
     loss        : a scalar indicating the total loss
     loss_c      : the content loss
     loss_s      : the style loss
+    loss_id1    : the identity loss 1
+    loss_id2    : the identity loss 2
     
     """      
     loss_c = content_loss(vgg, Ic, Ig)
     loss_s = style_loss(vgg, Is, Ig)
-    loss = lambda_c*loss_c + lambda_s*loss_s + lambda_id1*identity_loss_1(Ic, Icc, Is, Iss) + lambda_id2*identity_loss_2(vgg, Ic, Icc, Is, Iss)
-    return loss, loss_c, loss_s
+    loss_id1 = identity_loss_1(Ic, Icc, Is, Iss)
+    loss_id2 = identity_loss_2(vgg, Ic, Icc, Is, Iss)
+    loss = lambda_c*loss_c + lambda_s*loss_s + lambda_id1*loss_id1 + lambda_id2*loss_id2
+    return loss, loss_c, loss_s, loss_id1, loss_id2
     
