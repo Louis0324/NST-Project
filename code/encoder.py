@@ -34,14 +34,20 @@ def print_trainable_parameters(model):
     )
 
 class Encoder(nn.Module):
-    def __init__(self, num_layers, lora_config=None):
+    def __init__(self, num_layers, lora_config=None, freeze=False):
         super().__init__()
         model = ViTModel.from_pretrained('google/vit-base-patch16-224-in21k')
         model = ModifyLayers(model, num_layers)
         if lora_config is not None:
             self.model = get_peft_model(model, peft_config=lora_config)
+            if freeze:
+                raise Exception('Cannot freeze the model while using LoRA!')
         else:
             self.model = model
+            if freeze:
+                for p in self.model.parameters():
+                    if p.requires_grad:
+                        p.requires_grad_(False)
         
     def forward(self, imags):
         B, C, H, W = imags.shape

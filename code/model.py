@@ -6,10 +6,10 @@ from encoder import Encoder
 from decoder import Decoder
 
 class NST(nn.Module):
-    def __init__(self, encoder_num_layers=6, decoder_num_layers=3, lora_config_c=None, lora_config_s=None):
+    def __init__(self, encoder_num_layers=6, decoder_num_layers=3, lora_config_c=None, lora_config_s=None, freeze=False):
         super().__init__()
-        self.encoder_c = Encoder(encoder_num_layers, lora_config_c)
-        self.encoder_s = Encoder(encoder_num_layers, lora_config_s)
+        self.encoder_c = Encoder(encoder_num_layers, lora_config_c, freeze)
+        self.encoder_s = Encoder(encoder_num_layers, lora_config_s, freeze)
         self.decoder = Decoder(trans_decoder_layers_num=decoder_num_layers)
 
     def forward(self, content_image, style_image):
