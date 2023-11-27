@@ -213,6 +213,15 @@ freeze encoder for first 2 epochs, then unfreeze it with lora
 
 
 ---------------------------------------------------------------------------------------------------------
+all the experiments below are based on 28th, where lambda_c = 1, lambda_s = 7, no identity loss
+for 28th, we have:
+
+r = 16
+target_modules=["query", "value"]
+encoder_num_layers=6
+decoder_num_layers=3
+
+the rest of experiments are changed based on the above config, if not mentioned, stay the same as 28th
 
 28th 
 --cuda:3
