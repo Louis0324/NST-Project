@@ -9,7 +9,7 @@ from lossnet import VGG
 from trainer import train_NST
 from encoder import print_trainable_parameters
 
-device = torch.device("cuda:2" if torch.cuda.is_available() else 'cpu')
+device = torch.device("cuda:3" if torch.cuda.is_available() else 'cpu')
 if __name__ == "__main__":
     # set random seeds
     torch.manual_seed(324)
@@ -27,16 +27,16 @@ if __name__ == "__main__":
     # define model
     print('Loading model...')
     lora_config_c = LoraConfig(
-        r=16,
+        r=64,
         lora_alpha=16,
-        target_modules=["query", "value", "key"],
+        target_modules=["query", "value"],
         lora_dropout=0.1,
         bias="none",
     )
     lora_config_s = LoraConfig(
-        r=16,
+        r=64,
         lora_alpha=16,
-        target_modules=["query", "value", "key"],
+        target_modules=["query", "value"],
         lora_dropout=0.1,
         bias="none",
     )
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, betas=(0.9, 0.999))
     lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[4, 6, 8], gamma=0.3)
     # train the decoder
-    train_NST(model, vgg, optimizer, lr_scheduler, train_dataloader, val_dataloader, num_epoch=2, comment='30th_initial_decoder', save_list=[], device=device, lambda_c=1, lambda_s=7, lambda_id1=0, lambda_id2=0)
+    train_NST(model, vgg, optimizer, lr_scheduler, train_dataloader, val_dataloader, num_epoch=2, comment='35th_initial_decoder', save_list=[], device=device, lambda_c=1, lambda_s=7, lambda_id1=0, lambda_id2=0)
     
     # unfreeze the encoders and wrap with lora
     model.encoder_c = get_peft_model(model.encoder_c, lora_config_c)
@@ -61,6 +61,6 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4, betas=(0.9, 0.999))
     lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[4, 6, 8], gamma=0.3)
     # jointly training
-    train_NST(model, vgg, optimizer, lr_scheduler, train_dataloader, val_dataloader, num_epoch=9, comment='30th_jointly_training', save_list=[1, 4, 8], device=device, lambda_c=1, lambda_s=7, lambda_id1=0, lambda_id2=0)
+    train_NST(model, vgg, optimizer, lr_scheduler, train_dataloader, val_dataloader, num_epoch=9, comment='35th_jointly_training', save_list=[1, 4, 8], device=device, lambda_c=1, lambda_s=7, lambda_id1=0, lambda_id2=0)
 
 
