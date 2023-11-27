@@ -211,29 +211,54 @@ freeze encoder for first 2 epochs, then unfreeze it with lora
 --content loss too high! 
 --x
 
+
+---------------------------------------------------------------------------------------------------------
+
 28th 
 --cuda:3
 --lambda_c=1, lambda_s=7, lambda_id1=0, lambda_id2=0
 --milestones=[4, 6, 8]
 --r = 16, ["query", "value"]
---
+--avg loss_c = 9.13420, avg loss_s = 1.53308
 
 29th 
 --cuda:1
 --same as 28th, but r = 32
---
+--avg loss_c = 9.11250, avg loss_s = 1.54370
 
 30th 
 --cuda:2
 --same as 28th, but ["query", "value", "key"]
---
+--avg loss_c = 9.12845, avg loss_s = 1.48029
 
 31th
 --cuda:4
 --same as 28th, but decoder_num_layers=4
---x
+--average content loss: 9.19236, average style loss: 1.47317
 
 32th 
 --cuda:4
 --same as 28th, but encoder_num_layers=8
---
+--average content loss: 9.17136, average style loss: 1.55878
+
+33th
+--cuda:1
+--same as 28th, but encoder_num_layers=4
+--average content loss: 9.11876, average style loss: 1.54833
+
+* 34th *
+--cuda:2
+--same as 28th, but ["query", "value", "key", "dense"]
+--average content loss: 9.09652, average style loss: 1.51420
+
+35th 
+--cuda:3
+--same as 28th, but r = 64
+--average content loss: 9.18309, average style loss: 1.55532
+
+
+Baselines:
+--Artflow: average content loss: 9.20037, average style loss: 2.74538
+--IEST: average content loss: 9.20560, average style loss: 2.80456
+--MCC: average content loss: 9.20405, average style loss: 2.94502
+--SANet: average content loss: 9.68702, average style loss: 2.53454
