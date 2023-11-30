@@ -4,6 +4,10 @@ Yisi Liu, Yujie Zhao, Yuanteng Chen, Xunzhe Zhou
 
 model checkpoint: [NST_best.pth](https://drive.google.com/file/d/1XNZxZVhc-PNaR4AW0BYxZq-QnJRNE5T1/view?usp=sharing)
 
+For inference time, please check `\code\inference.ipynb` for demo
+
+For training, please check `\code\trainer.py` and `\code\main.py` for the training pipeline
+
 # Overview
 
 Neural Style Transfer (NST) is a classical vision task, where the system takes in two images: one is the content image *I<sub>c</sub>* , the other is the style image *I<sub>s</sub>*. The goal here is to generate a new image *I<sub>g</sub>*, s.t. *I<sub>g</sub>* has the same content as *I<sub>c</sub>*, but also has the style of *I<sub>s</sub>*. Figure 1 [[1]](https://arxiv.org/abs/1705.04058) gives an example.
